@@ -7,6 +7,11 @@ export default function Quiz(props) {
     const answersMap = answers.map(answer => (
             <button 
                 key={answer.id}
+                style={{
+                    border: answer.isHeld ? "none" : "2px solid red",
+                    backdropFilter: answer.isHeld ? "D6DBF5" : "transparent",
+                    cursor: "pointer"
+                }}
                 className="quiz-answer"
                 onClick={() => {
                     if(!selectedAnswer || selectedAnswer === answer.id) 

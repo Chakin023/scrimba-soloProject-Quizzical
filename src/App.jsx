@@ -1,30 +1,37 @@
 import React, { useEffect, useState } from 'react'
 import Quiz from "../Components/Quiz"
+import ScoredQuiz from '../Components/ScoredQuiz'
 import {nanoid} from "nanoid"
 import './App.css'
 
 
 export default function App() {
 
+  const [startQuiz, setStartQuiz] = useState(false)
+  const [checkAnswer, setCheckAnswer] = useState(false)
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0)
   const [quizzies, setQuizzies] = useState([])
-  const [error, setError] = useState(null);
   
   useEffect(() => {
-    async function fetchQuizData() {
-      try {
-        const res = await fetch("https://opentdb.com/api.php?amount=5");
-        if(!res.ok) {
-          throw new Error(`HTTP Error! status: ${res.status}`)
-        }
-        const data = await res.json();
-        createQuizzies(data.results)
-      } catch(err) {
-        setError(err.message);
-        console.error("Error fetching quiz data: ", err);
-      }
-    }
     fetchQuizData();
-  }, [])
+  }, []);
+
+  function fetchQuizData() {
+    fetch("https://opentdb.com/api.php?amount=5")
+      .then(res => res.json())
+      .then(data => createQuizzies(data.results))
+      .catch(err => console.error("Error fetching quiz data: ", err));
+  }
+
+  useEffect(() => {
+    const correctAnswers = quizzies.reduce((acc, quiz) => {
+      return acc + quiz.answers.reduce((answerAcc, answer) => {
+        return answerAcc + (answer.isHeld && answer.isCorrect ? 1 : 0);
+      }, 0)
+    }, 0)
+
+    setCorrectAnswersCount(correctAnswers)
+  }, [quizzies])
 
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -86,7 +93,22 @@ export default function App() {
         selectedAnswer: newSelectedAnswer
       }
     }));
-    console.log(quizzies)
+  }
+
+  function handleStartQuiz() {
+    setStartQuiz(true)
+  }
+
+  function handleCheckAnswer() {
+    setCheckAnswer(true)
+    setStartQuiz(false)
+  }
+
+  function handleReset() {
+    setStartQuiz(false)
+    setCheckAnswer(false)
+    setQuizzies([])
+    fetchQuizData();
   }
 
   const quizElement = quizzies.map((quiz, index) => (
@@ -98,11 +120,45 @@ export default function App() {
       selectedAnswer={quiz.selectedAnswer} />
   ))
 
+  const scoredQuizElement = quizzies.map((quiz, index) => (
+    <ScoredQuiz 
+      key={index}
+      question={quiz.question}
+      answers={quiz.answers}
+      selectedAnswer={quiz.selectedAnswer}
+    />
+  ))
+
   return (
-    <div className="quizzical">
-      {quizElement}
-      <button>Check Answer</button>
-    </div>
+    <main>
+      {(!startQuiz && !checkAnswer) &&
+        <div className="welcome-container">
+          <h1>Welcome to Quizzical</h1>
+          <h2>Let's test your knowledge!</h2>
+          <button className="nav-button" onClick={handleStartQuiz}>Start</button>
+        </div>
+      }
+
+      {(startQuiz && !checkAnswer) &&
+        <div className="quizzical">
+          {quizElement}
+          <button className="nav-button" onClick={handleCheckAnswer}>Check Answer</button>
+        </div>
+      }
+
+      {(!startQuiz && checkAnswer) &&
+        <div className="quizzical">
+          {scoredQuizElement}
+          <div>
+            <h2>Your score {correctAnswersCount}/5 correct answers.</h2>
+            <button className="nav-button" onClick={handleReset}>Play Again</button>
+            </div>
+          
+        </div>
+      }
+
+  </main>
+    
   )
 }
 
