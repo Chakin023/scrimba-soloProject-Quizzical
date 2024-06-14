@@ -2,16 +2,54 @@ body {
     padding: 0;
     margin: 0;
     background-color: #BCD7FF;
+    
 }
 
 .welcome-container {
-    background-color: #BEE6FF;
-    border: 5px solid;
+    background-color: #4d6dc4;
+    border: 5px solid rgb(82, 82, 133);
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 100px;
+    padding: 50px 100px;
     font-size: 24px;
+    width: 50%;
     color: whitesmoke;
+}
+
+.nav-button {
+    color: rgb(35, 48, 163);
+    background-color: #bee6ff;
+    border: none;
+    border-radius: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 40px;
+    cursor: pointer;
+}
+
+
+
+.quizzical {
+    border: 5px solid rgb(82, 82, 133);
+    margin: 20px 30px;
+    padding: 70px 100px;
+    background-color: #4d6dc4;
+    color: whitesmoke;
+}
+
+.quizzical > .nav-button {
+    margin-top: 40px;
+}
+
+.quiz-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-answer {
+    padding: 10px;
+    margin: 0px 5px;
+    background-color: #bee6ff;
 }

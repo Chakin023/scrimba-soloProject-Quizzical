@@ -8,7 +8,7 @@ export default function Quiz(props) {
             <button 
                 key={answer.id}
                 style={{
-                    border: answer.isHeld ? "none" : "2px solid red",
+                    border: answer.isHeld ? "4px solid black" : "none",
                     backdropFilter: answer.isHeld ? "D6DBF5" : "transparent",
                     cursor: "pointer"
                 }}
